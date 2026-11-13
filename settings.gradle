@@ -8,4 +8,4 @@ plugins {
     id 'co.com.bancolombia.cleanArchitecture.settings' version '5.0.5'
 }
 
-rootProject.name = 'crediya-autenticacion-ms'
+rootProject.name = 'crediya-solicitudes-ms'

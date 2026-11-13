@@ -1,14 +1,14 @@
 server:
-  port: 8080
+  port: 8081
 spring:
   application:
-    name: "crediya-autenticacion-ms"
+    name: "crediya-solicitudes-ms"
   devtools:
     add-properties: false
   profiles:
     include: null
   datasource:
-    url: "${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/crediya_auth}"
+    url: "${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/crediya_solicitudes}"
     username: "${SPRING_DATASOURCE_USERNAME:postgres}"
     password: "${SPRING_DATASOURCE_PASSWORD:postgres}"
     driverClassName: "org.postgresql.Driver"
@@ -24,4 +24,4 @@ management:
       probes:
         enabled: true
 cors:
-  allowed-origins: "http://localhost:4200,http://localhost:8080"
+  allowed-origins: "http://localhost:4200,http://localhost:8080,http://localhost:8081"

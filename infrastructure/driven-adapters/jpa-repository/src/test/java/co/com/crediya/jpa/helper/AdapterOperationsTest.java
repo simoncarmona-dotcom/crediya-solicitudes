@@ -1,115 +1,77 @@
 package co.com.crediya.jpa.helper;
 
-import co.com.crediya.jpa.JPARepository;
-import co.com.crediya.jpa.JPARepositoryAdapter;
-import co.com.crediya.jpa.entity.UserEntity;
-import co.com.crediya.model.user.User;
+import co.com.crediya.jpa.SolicitudJPARepository;
+import co.com.crediya.jpa.SolicitudRepositoryAdapter;
+import co.com.crediya.jpa.entity.SolicitudEntity;
+import co.com.crediya.model.solicitud.Solicitud;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.reactivecommons.utils.ObjectMapper;
-import org.springframework.data.domain.Example;
 
 import java.math.BigDecimal;
-import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.when;
 
 class AdapterOperationsTest {
 
     @Mock
-    private JPARepository repository;
+    private SolicitudJPARepository repository;
 
     @Mock
     private ObjectMapper objectMapper;
 
-    private JPARepositoryAdapter adapter;
-    private User domainUser;
-    private UserEntity entityUser;
+    private SolicitudRepositoryAdapter adapter;
+    private Solicitud domainSolicitud;
+    private SolicitudEntity entitySolicitud;
 
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
 
-        domainUser = User.builder()
-                .idUsuario(1L)
-                .nombres("Simón")
-                .apellidos("Carmona")
-                .correoElectronico("simon@crediya.com")
-                .salarioBase(new BigDecimal("3500000"))
+        domainSolicitud = Solicitud.builder()
+                .idSolicitud(1L)
+                .documentoIdentidad("123456789")
+                .monto(new BigDecimal("5000000"))
+                .plazo(12)
+                .idTipoPrestamo(1L)
+                .idEstado(1L)
                 .build();
 
-        entityUser = UserEntity.builder()
-                .idUsuario(1L)
-                .nombres("Simón")
-                .apellidos("Carmona")
-                .correoElectronico("simon@crediya.com")
-                .salarioBase(new BigDecimal("3500000"))
+        entitySolicitud = SolicitudEntity.builder()
+                .idSolicitud(1L)
+                .documentoIdentidad("123456789")
+                .monto(new BigDecimal("5000000"))
+                .plazo(12)
+                .idTipoPrestamo(1L)
+                .idEstado(1L)
                 .build();
 
-        when(objectMapper.map(domainUser, UserEntity.class)).thenReturn(entityUser);
-        when(objectMapper.map(entityUser, User.class)).thenReturn(domainUser);
+        when(objectMapper.map(domainSolicitud, SolicitudEntity.class)).thenReturn(entitySolicitud);
+        when(objectMapper.map(entitySolicitud, Solicitud.class)).thenReturn(domainSolicitud);
 
-        adapter = new JPARepositoryAdapter(repository, objectMapper);
+        adapter = new SolicitudRepositoryAdapter(repository, objectMapper);
     }
 
     @Test
     void testSave() {
-        when(repository.save(entityUser)).thenReturn(entityUser);
+        when(repository.save(entitySolicitud)).thenReturn(entitySolicitud);
 
-        User result = adapter.save(domainUser);
-
-        assertEquals(domainUser.getCorreoElectronico(), result.getCorreoElectronico());
-    }
-
-    @Test
-    void testExistsByCorreoElectronico() {
-        when(repository.existsByCorreoElectronico("simon@crediya.com")).thenReturn(true);
-
-        assertTrue(adapter.existsByCorreoElectronico("simon@crediya.com"));
-    }
-
-    @Test
-    void testSaveAllEntities() {
-        List<User> users = List.of(domainUser);
-        List<UserEntity> entities = List.of(entityUser);
-
-        when(repository.saveAll(entities)).thenReturn(entities);
-
-        List<User> result = adapter.saveAllEntities(users);
-
-        assertEquals(1, result.size());
+        Solicitud result = adapter.save(domainSolicitud);
+        assertNotNull(result);
+        assertEquals(domainSolicitud.getDocumentoIdentidad(), result.getDocumentoIdentidad());
     }
 
     @Test
     void testFindById() {
-        when(repository.findById(1L)).thenReturn(Optional.of(entityUser));
+        when(repository.findById(1L)).thenReturn(Optional.of(entitySolicitud));
 
-        User result = adapter.findById(1L);
-
-        assertEquals(1L, result.getIdUsuario());
-    }
-
-    @Test
-    void testFindAll() {
-        when(repository.findAll()).thenReturn(List.of(entityUser));
-
-        List<User> result = adapter.findAll();
-
-        assertEquals(1, result.size());
-    }
-
-    @Test
-    void testFindByExample() {
-        when(repository.findAll(any(Example.class))).thenReturn(List.of(entityUser));
-
-        List<User> result = adapter.findByExample(domainUser);
-
-        assertEquals(1, result.size());
+        Solicitud result = adapter.findById(1L);
+        assertNotNull(result);
+        assertEquals(1L, result.getIdSolicitud());
     }
 }

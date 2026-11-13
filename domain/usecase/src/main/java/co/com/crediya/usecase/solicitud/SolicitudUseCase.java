@@ -6,7 +6,7 @@ import co.com.crediya.model.solicitud.TipoPrestamo;
 import co.com.crediya.model.solicitud.gateways.EstadoRepository;
 import co.com.crediya.model.solicitud.gateways.SolicitudRepository;
 import co.com.crediya.model.solicitud.gateways.TipoPrestamoRepository;
-import co.com.crediya.model.user.exception.BusinessException;
+import co.com.crediya.model.solicitud.exception.BusinessException;
 import lombok.RequiredArgsConstructor;
 
 import java.math.BigDecimal;

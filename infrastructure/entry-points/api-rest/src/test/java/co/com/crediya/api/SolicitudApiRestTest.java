@@ -3,7 +3,7 @@ package co.com.crediya.api;
 import co.com.crediya.model.solicitud.Estado;
 import co.com.crediya.model.solicitud.Solicitud;
 import co.com.crediya.model.solicitud.TipoPrestamo;
-import co.com.crediya.model.user.exception.BusinessException;
+import co.com.crediya.model.solicitud.exception.BusinessException;
 import co.com.crediya.usecase.solicitud.SolicitudUseCase;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -96,7 +96,7 @@ class SolicitudApiRestTest {
                 .exchange()
                 .expectStatus().isBadRequest()
                 .expectBody()
-                .jsonPath("$.codigo").isEqualTo(400);
+                .jsonPath("$.status").isEqualTo(400);
     }
 
     @Test

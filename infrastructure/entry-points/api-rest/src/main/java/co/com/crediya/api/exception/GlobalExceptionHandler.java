@@ -1,7 +1,6 @@
 package co.com.crediya.api.exception;
 
-import co.com.crediya.model.user.exception.BusinessException;
-import co.com.crediya.model.user.exception.EmailAlreadyExistsException;
+import co.com.crediya.model.solicitud.exception.BusinessException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,12 +16,6 @@ import java.util.Map;
 @Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
-
-    @ExceptionHandler(EmailAlreadyExistsException.class)
-    public ResponseEntity<Map<String, Object>> handleEmailAlreadyExists(EmailAlreadyExistsException ex) {
-        log.warn("Conflicto al registrar usuario: {}", ex.getMessage());
-        return buildErrorResponse(HttpStatus.CONFLICT, ex.getMessage(), null);
-    }
 
     @ExceptionHandler(BusinessException.class)
     public ResponseEntity<Map<String, Object>> handleBusinessException(BusinessException ex) {
@@ -41,31 +34,26 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
-    public ResponseEntity<Map<String, Object>> handleInvalidJson(HttpMessageNotReadableException ex) {
-        log.warn("Formato JSON o tipo de dato inválido en la petición: {}", ex.getMessage());
-        return buildErrorResponse(HttpStatus.BAD_REQUEST,
-                "El cuerpo de la petición tiene un formato inválido o tipos de datos incorrectos (verifique fechas y valores numéricos).",
-                null);
+    public ResponseEntity<Map<String, Object>> handleNotReadable(HttpMessageNotReadableException ex) {
+        log.warn("Error en el formato del cuerpo JSON: {}", ex.getMessage());
+        return buildErrorResponse(HttpStatus.BAD_REQUEST, "El cuerpo de la solicitud no tiene un formato JSON válido.", null);
     }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Map<String, Object>> handleGenericException(Exception ex) {
-        log.error("Error inesperado procesando la petición", ex);
-        return buildErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR,
-                "Ocurrió un error interno procesando la solicitud. Por favor, intente nuevamente más tarde.",
-                null);
+        log.error("Error no controlado: ", ex);
+        return buildErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Ha ocurrido un error interno en el servidor.", null);
     }
 
-    private ResponseEntity<Map<String, Object>> buildErrorResponse(
-            HttpStatus status, String mensaje, Object detalles) {
-        Map<String, Object> response = new LinkedHashMap<>();
-        response.put("timestamp", LocalDateTime.now().toString());
-        response.put("codigo", status.value());
-        response.put("error", status.getReasonPhrase());
-        response.put("mensaje", mensaje);
-        if (detalles != null) {
-            response.put("detalles", detalles);
+    private ResponseEntity<Map<String, Object>> buildErrorResponse(HttpStatus status, String message, Object details) {
+        Map<String, Object> body = new LinkedHashMap<>();
+        body.put("timestamp", LocalDateTime.now().toString());
+        body.put("status", status.value());
+        body.put("error", status.getReasonPhrase());
+        body.put("mensaje", message);
+        if (details != null) {
+            body.put("detalles", details);
         }
-        return ResponseEntity.status(status).body(response);
+        return new ResponseEntity<>(body, status);
     }
 }
